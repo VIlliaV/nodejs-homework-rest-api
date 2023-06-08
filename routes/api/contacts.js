@@ -1,5 +1,6 @@
 const express = require('express');
 
+
 const {
   listContacts,
   getContactById,
@@ -29,10 +30,12 @@ router.delete('/:contactId', isValidId, removeContact);
 router.put(
   '/:contactId',
   isValidId,
+
   isBodyEmpty,
   validateBody(contactsAddSchema),
   updateContact
 );
+
 
 router.patch(
   '/:contactId/favorite',
@@ -41,5 +44,6 @@ router.patch(
   validateBody(contactsUpdateFavoriteSchema),
   updateStatusContact
 );
+
 
 module.exports = router;

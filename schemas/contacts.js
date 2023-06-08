@@ -26,6 +26,7 @@ const contactsAddSchema = Joi.object({
       'any.required': `missing required 'email' field`,
       'string.empty': `'email' cannot be an empty field`,
     }),
+
   favorite: Joi.bool(),
 });
 
@@ -34,3 +35,4 @@ const contactsUpdateFavoriteSchema = Joi.object({
 });
 
 module.exports = { contactsAddSchema, contactsUpdateFavoriteSchema };
+
