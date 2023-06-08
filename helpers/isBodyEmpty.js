@@ -1,8 +1,13 @@
 const HttpError = require('./HttpError');
 
 const isBodyEmpty = async (req, _, next) => {
+
+  const path = req.route.path;
+  const errMessage = path === '/:contactId/favorite' ? ' favorite' : '';
+
   if (Object.keys(req.body).length === 0) {
-    next(HttpError(400));
+    next(HttpError(400, `missing field${errMessage}`));
+
   }
   next();
 };
