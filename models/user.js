@@ -24,6 +24,6 @@ const userSchema = new Schema(
 
 userSchema.post('save', handleMongooseError);
 
-const Users = model('contact', userSchema);
+const User = model('user', userSchema);
 
-module.exports = Users;
+module.exports = User;
