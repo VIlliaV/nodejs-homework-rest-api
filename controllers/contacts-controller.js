@@ -1,13 +1,11 @@
-
-const Movie = require('../models/contact');
+const Contact = require('../models/contact');
 
 const { HttpError } = require('../helpers');
 
 const { ctrlWrapper } = require('../decorators');
 
 const listContactsCtrl = async (req, res) => {
-
-  const result = await Movie.find({}, '-createdAt -updatedAt');
+  const result = await Contact.find({}, '-createdAt -updatedAt');
 
   res.json(result);
 };
@@ -15,15 +13,14 @@ const listContactsCtrl = async (req, res) => {
 const getContactByIdCtrl = async (req, res) => {
   const { contactId } = req.params;
 
-  const result = await Movie.findById(contactId);
+  const result = await Contact.findById(contactId);
 
   if (!result) throw HttpError(404);
   res.json(result);
 };
 
 const addContactCtrl = async (req, res) => {
-
-  const newContacts = await Movie.create(req.body);
+  const newContacts = await Contact.create(req.body);
 
   res.status(201).json(newContacts);
 };
@@ -31,7 +28,7 @@ const addContactCtrl = async (req, res) => {
 const removeContactCtrl = async (req, res) => {
   const { contactId } = req.params;
 
-  const result = await Movie.findByIdAndDelete(contactId);
+  const result = await Contact.findByIdAndDelete(contactId);
 
   if (!result) throw HttpError(404);
   res.json({ message: 'contact deleted' });
@@ -40,7 +37,7 @@ const removeContactCtrl = async (req, res) => {
 const updateContactCtrl = async (req, res) => {
   const { contactId } = req.params;
 
-  const result = await Movie.findByIdAndUpdate(contactId, req.body, {
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
     new: true,
   });
   if (!result) throw HttpError(404);
@@ -49,7 +46,7 @@ const updateContactCtrl = async (req, res) => {
 
 const updateStatusContactCtrl = async (req, res) => {
   const { contactId } = req.params;
-  const result = await Movie.findByIdAndUpdate(contactId, req.body, {
+  const result = await Contact.findByIdAndUpdate(contactId, req.body, {
     new: true,
   });
 
@@ -65,5 +62,4 @@ module.exports = {
   removeContact: ctrlWrapper(removeContactCtrl),
 
   updateStatusContact: ctrlWrapper(updateStatusContactCtrl),
-
 };
