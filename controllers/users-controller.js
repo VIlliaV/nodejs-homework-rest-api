@@ -7,18 +7,30 @@ const { HttpError } = require('../helpers');
 
 const { ctrlWrapper } = require('../decorators');
 
-const addUserCtrl = async (req, res) => {
+const { SECRET_KEY } = process.env;
+
+const registerUserCtrl = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  console.log('🚀 ~ user:', user);
 
-  if (user) throw HttpError(409, 'Email in use');
+  if (user) throw HttpError(409);
 
   const hashPassword = await bcrypt.hash(password, 10);
   const newUsers = await User.create({ ...req.body, password: hashPassword });
-  res.status(201).json(newUsers);
+  res.status(201).json({
+    user: { email: newUsers.email, subscription: newUsers.subscription },
+  });
+};
+
+const loginUserCtrl = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) throw HttpError(401);
+  const passwordCompare = await bcrypt.compare(password, user.password);
+  if (!passwordCompare) throw HttpError(401);
 };
 
 module.exports = {
-  addUser: ctrlWrapper(addUserCtrl),
+  registerUser: ctrlWrapper(registerUserCtrl),
+  loginUser: ctrlWrapper(loginUserCtrl),
 };

@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const usersAddSchema = Joi.object({
+const usersRegisterSchema = Joi.object({
   email: Joi.string()
     .email({
       minDomainSegments: 2,
@@ -17,4 +17,21 @@ const usersAddSchema = Joi.object({
   }),
 });
 
-module.exports = { usersAddSchema };
+const usersLoginSchema = Joi.object({
+  email: Joi.string()
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: ['com', 'net', 'ua', 'uk'] },
+    })
+    .required()
+    .messages({
+      'any.required': `missing required 'email' field`,
+      'string.empty': `'email' cannot be an empty field`,
+    }),
+  password: Joi.string().min(4).required().messages({
+    'any.required': `missing required 'password' field`,
+    'string.empty': `'name' cannot be an empty field`,
+  }),
+});
+
+module.exports = { usersRegisterSchema, usersLoginSchema };
