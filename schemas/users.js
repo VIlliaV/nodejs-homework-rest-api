@@ -11,7 +11,7 @@ const usersAddSchema = Joi.object({
       'any.required': `missing required 'email' field`,
       'string.empty': `'email' cannot be an empty field`,
     }),
-  password: Joi.string().min(3).required().messages({
+  password: Joi.string().min(4).required().messages({
     'any.required': `missing required 'password' field`,
     'string.empty': `'name' cannot be an empty field`,
   }),

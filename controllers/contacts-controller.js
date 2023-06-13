@@ -46,6 +46,7 @@ const updateContactCtrl = async (req, res) => {
 
 const updateStatusContactCtrl = async (req, res) => {
   const { contactId } = req.params;
+
   const result = await Contact.findByIdAndUpdate(contactId, req.body, {
     new: true,
   });
