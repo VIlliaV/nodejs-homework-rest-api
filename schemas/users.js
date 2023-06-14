@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { subscriptionList } = require('../constants');
 
 const usersRegisterSchema = Joi.object({
   email: Joi.string()
@@ -34,4 +35,14 @@ const usersLoginSchema = Joi.object({
   }),
 });
 
-module.exports = { usersRegisterSchema, usersLoginSchema };
+const usersUpdateSubscriptionSchema = Joi.object({
+  subscription: Joi.string()
+    .valid(...subscriptionList)
+    .required(),
+});
+
+module.exports = {
+  usersRegisterSchema,
+  usersLoginSchema,
+  usersUpdateSubscriptionSchema,
+};
