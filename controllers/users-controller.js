@@ -37,7 +37,23 @@ const loginUserCtrl = async (req, res) => {
   });
 };
 
+const logoutUserCtrl = async (req, res) => {
+  const { _id } = req.user;
+  await User.findByIdAndUpdate(_id, { token: '' });
+
+  res.status(204).json();
+};
+
+const currentUserCtrl = async (req, res) => {
+  const { _id } = req.user;
+  const { email, subscription } = await User.findById(_id);
+
+  res.json({ email, subscription });
+};
+
 module.exports = {
   registerUser: ctrlWrapper(registerUserCtrl),
   loginUser: ctrlWrapper(loginUserCtrl),
+  logoutUser: ctrlWrapper(logoutUserCtrl),
+  currentUser: ctrlWrapper(currentUserCtrl),
 };

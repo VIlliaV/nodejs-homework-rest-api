@@ -6,6 +6,7 @@ const { ctrlWrapper } = require('../decorators');
 
 const listContactsCtrl = async (req, res) => {
   const { _id: owner } = req.user;
+  console.log('🚀 ~ req.user:', req.user);
   const result = await Contact.find({ owner }, '-createdAt -updatedAt');
 
   res.json(result);
