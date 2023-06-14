@@ -15,8 +15,10 @@ const {
   contactsUpdateFavoriteSchema,
 } = require('../../schemas/contacts');
 const { isBodyEmpty } = require('../../helpers');
-const { isValidId } = require('../../middlewares');
+const { isValidId, authenticate } = require('../../middlewares');
 const router = express.Router();
+
+router.use(authenticate);
 
 router.get('/', listContacts);
 
