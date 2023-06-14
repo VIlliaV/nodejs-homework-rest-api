@@ -1,13 +1,16 @@
 const Contact = require('../models/contact');
-
 const { HttpError } = require('../helpers');
-
 const { ctrlWrapper } = require('../decorators');
 
 const listContactsCtrl = async (req, res) => {
   const { _id: owner } = req.user;
-  console.log('🚀 ~ req.user:', req.user);
-  const result = await Contact.find({ owner }, '-createdAt -updatedAt');
+  const { page = 1, limit = 20, ...query } = req.query;
+  const skip = (page - 1) * limit;
+  const result = await Contact.find(
+    { owner, ...query },
+    '-createdAt -updatedAt',
+    { skip, limit }
+  );
 
   res.json(result);
 };
@@ -15,6 +18,7 @@ const listContactsCtrl = async (req, res) => {
 const getContactByIdCtrl = async (req, res) => {
   const { contactId } = req.params;
   const { _id: owner } = req.user;
+
   const result = await Contact.findOne({
     _id: contactId,
     owner: owner,
@@ -26,6 +30,7 @@ const getContactByIdCtrl = async (req, res) => {
 
 const addContactCtrl = async (req, res) => {
   const { _id: owner } = req.user;
+
   const newContacts = await Contact.create({ ...req.body, owner });
 
   res.status(201).json(newContacts);
@@ -34,6 +39,7 @@ const addContactCtrl = async (req, res) => {
 const removeContactCtrl = async (req, res) => {
   const { contactId } = req.params;
   const { _id: owner } = req.user;
+
   const result = await Contact.findOneAndDelete({
     _id: contactId,
     owner: owner,
@@ -46,6 +52,7 @@ const removeContactCtrl = async (req, res) => {
 const updateContactCtrl = async (req, res) => {
   const { contactId } = req.params;
   const { _id: owner } = req.user;
+
   const result = await Contact.findOneAndUpdate(
     { _id: contactId, owner: owner },
     req.body,
@@ -53,6 +60,7 @@ const updateContactCtrl = async (req, res) => {
       new: true,
     }
   );
+
   if (!result) throw HttpError(404);
   res.json(result);
 };

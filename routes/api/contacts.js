@@ -14,8 +14,10 @@ const {
   contactsAddSchema,
   contactsUpdateFavoriteSchema,
 } = require('../../schemas/contacts');
+
 const { isBodyEmpty } = require('../../helpers');
 const { isValidId, authenticate } = require('../../middlewares');
+
 const router = express.Router();
 
 router.use(authenticate);
