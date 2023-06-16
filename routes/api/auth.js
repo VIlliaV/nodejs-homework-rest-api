@@ -20,7 +20,7 @@ const router = express.Router();
 router.post('/register', validateBody(usersRegisterSchema), registerUser);
 router.post('/login', validateBody(usersLoginSchema), loginUser);
 router.post('/logout', authenticate, logoutUser);
-router.post('/current', authenticate, currentUser);
+router.get('/current', authenticate, currentUser);
 router.patch(
   '/subscription',
   authenticate,
