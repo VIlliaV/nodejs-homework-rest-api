@@ -30,12 +30,6 @@ router.patch(
   updateSubscription
 );
 
-router.patch(
-  '/avatars',
-  authenticate,
-  upload.single('avatar'),
-  isBodyEmpty,
-  updateAvatar
-);
+router.patch('/avatars', authenticate, upload.single('avatar'), updateAvatar);
 
 module.exports = router;

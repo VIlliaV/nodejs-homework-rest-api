@@ -6,14 +6,13 @@ const destination = path.resolve('tmp');
 const storage = multer.diskStorage({
   destination,
   filename: (req, file, cb) => {
-    const uniquePreffix =
-      Date.now() +
-      '-' +
-      Math.round(Math.random() * 1e9) +
-      '-' +
-      req.user.email.split('@')[0];
-    const { originalname } = file;
-    const filename = `${uniquePreffix}_${originalname}`;
+    console.log('🚀 ~ file:', file);
+    const [uniquePreffix, uniquePreffixAfterAt] = req.user.email
+      .replace('.', '_')
+      .split('@');
+    const type = file.mimetype.split('/')[1];
+
+    const filename = `${uniquePreffix}_${uniquePreffixAfterAt}_avatar.${type}`;
     cb(null, filename);
   },
 });

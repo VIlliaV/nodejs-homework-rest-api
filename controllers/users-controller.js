@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const gravatar = require('gravatar');
 const fs = require('fs/promises');
 const path = require('path');
+const Jimp = require('jimp');
 const User = require('../models/user');
 const { HttpError } = require('../helpers');
 const { ctrlWrapper } = require('../decorators');
@@ -55,9 +56,9 @@ const logoutUserCtrl = async (req, res) => {
 };
 
 const currentUserCtrl = async (req, res) => {
-  const { email, subscription } = req.user;
+  const { email, subscription, avatarURL } = req.user;
 
-  res.json({ email, subscription });
+  res.json({ email, subscription, avatarURL });
 };
 
 const updateSubscriptionCtrl = async (req, res) => {
@@ -74,11 +75,19 @@ const updateAvatarCtrl = async (req, res) => {
   const { _id } = req.user;
   const { path: oldPath, filename } = req.file;
   const newPath = path.join(avatarDir, filename);
-  await fs.rename(oldPath, newPath);
-  const avatarUrl = path.join('avatars', filename);
-  await User.findByIdAndUpdate(_id, { ...req.body, avatarUrl });
 
-  res.json({ avatarUrl });
+  await Jimp.read(oldPath)
+    .then(avatar => {
+      return avatar.resize(250, 250).write(oldPath);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
+  await fs.rename(oldPath, newPath);
+  const avatarURL = path.join('avatars', filename);
+  await User.findByIdAndUpdate(_id, { ...req.body, avatarURL });
+  res.json({ avatarURL });
 };
 
 module.exports = {
