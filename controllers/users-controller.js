@@ -26,10 +26,13 @@ const registerUserCtrl = async (req, res) => {
     html: `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Click to verify email</a>`,
   };
 
-  const { status, message } = await sendEmail(verifyEmail);
+  const status = await sendEmail(verifyEmail);
   console.log('🚀 ~ status:', status);
 
-  if (status !== 200) throw HttpError(status, message);
+  if (status !== 'Ok') {
+    const { response, responseCode } = status;
+    throw HttpError(responseCode, response);
+  }
   const newUsers = await User.create({
     ...req.body,
     password: hashPassword,
