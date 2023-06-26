@@ -22,8 +22,6 @@ const sendEmail = async data => {
 
     return 'Ok';
   } catch (error) {
-    console.log('🚀 ~ error:', error);
-
     return error;
   }
 };

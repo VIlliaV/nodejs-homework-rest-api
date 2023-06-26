@@ -18,6 +18,19 @@ const usersRegisterSchema = Joi.object({
   }),
 });
 
+const usersVerifySchema = Joi.object({
+  email: Joi.string()
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: ['com', 'net', 'ua', 'uk'] },
+    })
+    .required()
+    .messages({
+      'any.required': `missing required field 'email'`,
+      'string.empty': `'email' cannot be an empty field`,
+    }),
+});
+
 const usersLoginSchema = Joi.object({
   email: Joi.string()
     .email({
@@ -45,4 +58,5 @@ module.exports = {
   usersRegisterSchema,
   usersLoginSchema,
   usersUpdateSubscriptionSchema,
+  usersVerifySchema,
 };

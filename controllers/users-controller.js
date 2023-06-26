@@ -27,7 +27,6 @@ const registerUserCtrl = async (req, res) => {
   };
 
   const status = await sendEmail(verifyEmail);
-  console.log('🚀 ~ status:', status);
 
   if (status !== 'Ok') {
     const { response, responseCode } = status;
@@ -58,6 +57,28 @@ const verificationTokenCtrl = async (req, res) => {
   res.status(200).json({
     message: 'Verification successful',
   });
+};
+
+const resendVerifyCtrl = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) throw HttpError(401);
+  const { verificationToken, verify } = user;
+  if (verify) throw HttpError(400, 'Verification has already been passed');
+  const verifyEmail = {
+    to: email,
+    subject: 'Verify email',
+    html: `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Click to verify email</a>`,
+  };
+
+  const status = await sendEmail(verifyEmail);
+
+  if (status !== 'Ok') {
+    const { response, responseCode } = status;
+    throw HttpError(responseCode, response);
+  }
+
+  res.status(200).json('Verification email sent');
 };
 
 const loginUserCtrl = async (req, res) => {
@@ -123,10 +144,11 @@ const updateAvatarCtrl = async (req, res) => {
 
 module.exports = {
   registerUser: ctrlWrapper(registerUserCtrl),
+  verificationToken: ctrlWrapper(verificationTokenCtrl),
+  resendVerify: ctrlWrapper(resendVerifyCtrl),
   loginUser: ctrlWrapper(loginUserCtrl),
   logoutUser: ctrlWrapper(logoutUserCtrl),
   currentUser: ctrlWrapper(currentUserCtrl),
   updateSubscription: ctrlWrapper(updateSubscriptionCtrl),
   updateAvatar: ctrlWrapper(updateAvatarCtrl),
-  verificationToken: ctrlWrapper(verificationTokenCtrl),
 };
