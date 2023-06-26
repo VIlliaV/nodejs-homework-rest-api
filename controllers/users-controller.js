@@ -1,9 +1,15 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const gravatar = require('gravatar');
+const fs = require('fs/promises');
+const path = require('path');
+const Jimp = require('jimp');
 const User = require('../models/user');
 const { HttpError } = require('../helpers');
 const { ctrlWrapper } = require('../decorators');
 const { SECRET_KEY } = process.env;
+
+const avatarDir = path.resolve('public', 'avatars');
 
 const registerUserCtrl = async (req, res) => {
   const { email, password } = req.body;
@@ -11,7 +17,13 @@ const registerUserCtrl = async (req, res) => {
   const user = await User.findOne({ email });
   if (user) throw HttpError(409);
   const hashPassword = await bcrypt.hash(password, 10);
-  const newUsers = await User.create({ ...req.body, password: hashPassword });
+  const avatarURL = gravatar.url(email);
+
+  const newUsers = await User.create({
+    ...req.body,
+    password: hashPassword,
+    avatarURL,
+  });
 
   res.status(201).json({
     user: { email: newUsers.email, subscription: newUsers.subscription },
@@ -44,9 +56,9 @@ const logoutUserCtrl = async (req, res) => {
 };
 
 const currentUserCtrl = async (req, res) => {
-  const { email, subscription } = req.user;
+  const { email, subscription, avatarURL } = req.user;
 
-  res.json({ email, subscription });
+  res.json({ email, subscription, avatarURL });
 };
 
 const updateSubscriptionCtrl = async (req, res) => {
@@ -59,10 +71,30 @@ const updateSubscriptionCtrl = async (req, res) => {
   res.json({ email, subscription });
 };
 
+const updateAvatarCtrl = async (req, res) => {
+  const { _id } = req.user;
+  const { path: oldPath, filename } = req.file;
+  const newPath = path.join(avatarDir, filename);
+
+  await Jimp.read(oldPath)
+    .then(avatar => {
+      return avatar.resize(250, 250).write(oldPath);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
+  await fs.rename(oldPath, newPath);
+  const avatarURL = path.join('avatars', filename);
+  await User.findByIdAndUpdate(_id, { avatarURL });
+  res.json({ avatarURL });
+};
+
 module.exports = {
   registerUser: ctrlWrapper(registerUserCtrl),
   loginUser: ctrlWrapper(loginUserCtrl),
   logoutUser: ctrlWrapper(logoutUserCtrl),
   currentUser: ctrlWrapper(currentUserCtrl),
   updateSubscription: ctrlWrapper(updateSubscriptionCtrl),
+  updateAvatar: ctrlWrapper(updateAvatarCtrl),
 };
