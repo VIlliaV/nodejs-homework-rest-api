@@ -17,8 +17,16 @@ const transport = nodemailer.createTransport(nodemailerConfig);
 
 const sendEmail = async data => {
   const email = { ...data, from: UKR_NET_EMAIL };
-  await transport.sendMail(email);
-  return true;
+  try {
+    const sendOk = await transport.sendMail(email);
+    console.log('🚀 ~ sendOk:', sendOk);
+
+    return sendOk;
+  } catch (error) {
+    console.log('🚀 ~ error:', error);
+
+    return error;
+  }
 };
 
 module.exports = sendEmail;
