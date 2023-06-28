@@ -2,6 +2,8 @@ const express = require('express');
 
 const {
   registerUser,
+  verificationToken,
+  resendVerify,
   loginUser,
   logoutUser,
   currentUser,
@@ -15,10 +17,13 @@ const {
   usersRegisterSchema,
   usersLoginSchema,
   usersUpdateSubscriptionSchema,
+  usersVerifySchema,
 } = require('../../schemas/users');
 const router = express.Router();
 
 router.post('/register', validateBody(usersRegisterSchema), registerUser);
+router.get('/verify/:verificationToken', verificationToken);
+router.post('/verify', validateBody(usersVerifySchema), resendVerify);
 router.post('/login', validateBody(usersLoginSchema), loginUser);
 router.post('/logout', authenticate, logoutUser);
 router.get('/current', authenticate, currentUser);

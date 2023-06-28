@@ -6,7 +6,6 @@ const destination = path.resolve('tmp');
 const storage = multer.diskStorage({
   destination,
   filename: (req, file, cb) => {
-    console.log('🚀 ~ file:', file);
     const [uniquePreffix, uniquePreffixAfterAt] = req.user.email
       .replace('.', '_')
       .split('@');
