@@ -78,7 +78,7 @@ const resendVerifyCtrl = async (req, res) => {
     throw HttpError(responseCode, response);
   }
 
-  res.status(200).json('Verification email sent');
+  res.status(200).json({ message: 'Verification email sent' });
 };
 
 const loginUserCtrl = async (req, res) => {
