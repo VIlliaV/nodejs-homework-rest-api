@@ -21,7 +21,7 @@ const {
 } = require('../../schemas/users');
 const router = express.Router();
 
-router.post('/register', validateBody(usersRegisterSchema), registerUser);
+router.post('/signup', validateBody(usersRegisterSchema), registerUser);
 router.get('/verify/:verificationToken', verificationToken);
 router.post('/verify', validateBody(usersVerifySchema), resendVerify);
 router.post('/login', validateBody(usersLoginSchema), loginUser);
@@ -35,6 +35,6 @@ router.patch(
   updateSubscription
 );
 
-router.patch('/avatars', authenticate, upload.single('avatar'), updateAvatar);
+router.patch('/avatar', authenticate, upload.single('avatars'), updateAvatar);
 
 module.exports = router;

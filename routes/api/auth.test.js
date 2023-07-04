@@ -30,7 +30,7 @@ describe('test login route', () => {
       email: 'test@gmail.com',
       password: '12345678',
     };
-    await request(app).post('/users/register').send(loginData);
+    await request(app).post('/users/signup').send(loginData);
     const {
       body: { token, user },
       statusCode,

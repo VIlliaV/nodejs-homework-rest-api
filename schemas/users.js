@@ -2,6 +2,10 @@ const Joi = require('joi');
 const { subscriptionList } = require('../constants');
 
 const usersRegisterSchema = Joi.object({
+  name: Joi.string().max(25).required().messages({
+    'any.required': `missing required 'name' field`,
+    'string.empty': `'name' cannot be an empty field`,
+  }),
   email: Joi.string()
     .email({
       minDomainSegments: 2,
@@ -14,7 +18,7 @@ const usersRegisterSchema = Joi.object({
     }),
   password: Joi.string().min(4).required().messages({
     'any.required': `missing required 'password' field`,
-    'string.empty': `'name' cannot be an empty field`,
+    'string.empty': `'password' cannot be an empty field`,
   }),
 });
 

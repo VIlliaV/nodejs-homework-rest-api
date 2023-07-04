@@ -13,7 +13,7 @@ const { SECRET_KEY, BASE_URL } = process.env;
 const avatarDir = path.resolve('public', 'avatars');
 
 const registerUserCtrl = async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
   const user = await User.findOne({ email });
   if (user) throw HttpError(409);
@@ -40,7 +40,7 @@ const registerUserCtrl = async (req, res) => {
   });
 
   res.status(201).json({
-    user: { email: newUsers.email, subscription: newUsers.subscription },
+    user: { name, email: newUsers.email, subscription: newUsers.subscription },
   });
 };
 
@@ -108,9 +108,9 @@ const logoutUserCtrl = async (req, res) => {
 };
 
 const currentUserCtrl = async (req, res) => {
-  const { email, subscription, avatarURL } = req.user;
+  const { name, email, subscription, avatarURL } = req.user;
 
-  res.json({ email, subscription, avatarURL });
+  res.json({ name, email, subscription, avatarURL });
 };
 
 const updateSubscriptionCtrl = async (req, res) => {
@@ -137,7 +137,21 @@ const updateAvatarCtrl = async (req, res) => {
     });
 
   await fs.rename(oldPath, newPath);
+
   const avatarURL = path.join('avatars', filename);
+
+  const { avatarURL: oldAvatar } = await User.findById(_id);
+
+  const oldAvatarDir = path.join('public', oldAvatar);
+
+  if (avatarURL !== oldAvatar) {
+    try {
+      await fs.unlink(oldAvatarDir);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   await User.findByIdAndUpdate(_id, { avatarURL });
   res.json({ avatarURL });
 };
