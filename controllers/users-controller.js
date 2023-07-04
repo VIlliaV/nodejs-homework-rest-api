@@ -95,7 +95,12 @@ const loginUserCtrl = async (req, res) => {
 
   res.json({
     token,
-    user: { email, subscription: user.subscription },
+    user: {
+      email,
+      subscription: user.subscription,
+      name: user.name,
+      avatarURL: user.avatarURL,
+    },
   });
 };
 
